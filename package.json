@@ -1,0 +1,39 @@
+{
+  "name": "TabPolish",
+  "version": "0.4.0",
+  "description": "Manage tabs in Google Chrome.",
+  "main": "options.html",
+  "dependencies": {
+    "coffeelint": "^1.8.1",
+    "bower": "^1.3.12",
+    "grunt": "^0.4.5",
+    "grunt-coffeelint": "^0.0.13",
+    "grunt-contrib-coffee": "^0.12.0",
+    "grunt-contrib-sass": "^0.8.1",
+    "grunt-htmlhint": "^0.4.1",
+    "grunt-contrib-compress": "^0.13.0",
+    "grunt-contrib-watch": "^0.6.1"
+  },
+  "devDependencies": {
+    "grunt-contrib-compress": "^0.13.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://blaskovicz@github.com/blaskovicz/TabPolish.git"
+  },
+  "keywords": [
+    "chrome",
+    "angular",
+    "tab",
+    "extension"
+  ],
+  "author": "Zach Auclair <zach101@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/blaskovicz/TabPolish/issues"
+  },
+  "homepage": "https://github.com/blaskovicz/TabPolish"
+}

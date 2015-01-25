@@ -1,0 +1,52 @@
+body {
+  padding: 5px;
+  width: 500px;
+  max-height: 600px;
+  background: rgb(249, 249, 249);
+  overflow-y: hidden;
+}
+div {
+  h2.title {
+    margin: 0;
+    padding: 0;
+    float: right;
+    font-family: monospace;
+    font-weight: 700;
+  }
+  &#polish-options {
+    background: #fff;
+    padding: 0 5px 0 5px;
+    margin-bottom: 5px;
+    label:hover {
+      color: gray;
+      cursor: pointer;
+    }
+  }
+  &#active-windows {
+    margin-bottom: 10px;
+  }
+  &#active-tabs {
+    padding: 0 5px 0 5px;
+    background: #fff;
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+    label.tab-description {
+      display: block;
+      max-width: 600px;
+      small.subtext {
+        display: block;
+        max-width: 500px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      span {
+        vertical-align: top;
+      }
+      &:hover {
+        color: gray;
+        cursor: pointer;
+      }
+    }
+  }
+}

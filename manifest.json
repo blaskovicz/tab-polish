@@ -8,8 +8,8 @@
     "storage"
   ],
   "background": {
-  	"scripts": ["jquery.js", "options.js", "listeners.js"],
-  	"persistent": false
+    "page": "options.html",
+  	"persistent": true
   },
   "icons": {
     "16": "magic-10-icon-16.png",

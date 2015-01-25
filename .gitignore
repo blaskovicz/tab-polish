@@ -1,1 +1,6 @@
 *.zip
+node_modules/
+bower_components/
+.sass-cache/
+app.js
+main.css
