@@ -75,6 +75,8 @@ angular.module('tabpolish.controllers').controller "TabManageController", [
         if url.match(/rpd\/summary.aspx/i)
       url
     polishTabs = (tabId, changeInfo, tab) ->
+      return if polishing or changeInfo?.status isnt "complete"
+      polishing = yes
       $log.info \
         "Polishing tabs#{if tab? then ', triggered by tab ' + tab.id else ''}"
       # load all prefs each time
@@ -85,8 +87,6 @@ angular.module('tabpolish.controllers').controller "TabManageController", [
         $log.info "window/#{windowId}/tab/#{tab.id} update: \
           #{tab.url} [ #{currentTabNormalizedUrl} ]"
         chrome.tabs.query {windowId: windowId}, (tabs) ->
-          return if polishing
-          polishing = yes
           $log.info("window/" + windowId + " has " + tabs.length + " tabs")
           return unless tabs? and tabs.length > 0
           tabLookup = {}
