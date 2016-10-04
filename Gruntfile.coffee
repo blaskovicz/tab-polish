@@ -14,6 +14,8 @@ module.exports = (grunt) ->
           'manifest.json'
           'main.css'
         ]
+    exec:
+      'chrome-preview': 'google-chrome --load-extension=./ --no-first-run || chrome.exe --load-extension=.\ --no-first-run'
     sass:
       dist:
         files:
@@ -60,6 +62,8 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-htmlhint'
   grunt.loadNpmTasks 'grunt-contrib-coffee'
   grunt.loadNpmTasks 'grunt-coffeelint'
+  grunt.loadNpmTasks 'grunt-exec'
   grunt.registerTask 'build', ['htmlhint','sass','coffeelint','coffee']
   grunt.registerTask 'dist', ['build', 'compress']
+  grunt.registerTask 'preview', ['exec:chrome-preview']
   grunt.registerTask 'default', ['build','watch']

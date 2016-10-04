@@ -4,3 +4,4 @@ bower_components/
 .sass-cache/
 app.js
 main.css
+main.css.map
