@@ -17,6 +17,8 @@ module.exports = (grunt) ->
     exec:
       'chrome-preview': 'google-chrome --load-extension=./ --no-first-run || chrome.exe --load-extension=.\ --no-first-run'
     sass:
+      options:
+        sourceMap: true
       dist:
         files:
           'main.css': '*.scss'
@@ -57,7 +59,7 @@ module.exports = (grunt) ->
           'coffee'
         ]
   grunt.loadNpmTasks 'grunt-contrib-compress'
-  grunt.loadNpmTasks 'grunt-contrib-sass'
+  grunt.loadNpmTasks 'grunt-sass'
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-htmlhint'
   grunt.loadNpmTasks 'grunt-contrib-coffee'

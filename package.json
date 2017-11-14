@@ -11,10 +11,10 @@
     "grunt-coffeelint": "^0.0.13",
     "grunt-contrib-coffee": "^0.12.0",
     "grunt-contrib-compress": "^0.13.0",
-    "grunt-contrib-sass": "^0.8.1",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-exec": "^1.0.1",
-    "grunt-htmlhint": "^0.4.1"
+    "grunt-htmlhint": "^0.4.1",
+    "grunt-sass": "^2.0.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
