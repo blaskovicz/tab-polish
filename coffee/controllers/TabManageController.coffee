@@ -18,9 +18,10 @@ angular.module('tabpolish.controllers').controller "TabManageController", [
       APP: "app"
     populateWindowInfo = ->
       $log.info "querying current window for tabs"
-      chrome.windows.getCurrent {populate: yes}, (ourWindow) ->
+      windowQuery = {populate: yes, windowTypes: [WindowType.NORMAL]}
+      chrome.windows.getCurrent windowQuery, (ourWindow) ->
         return unless ourWindow.type is WindowType.NORMAL
-        chrome.windows.getAll {populate: yes}, (allWindows) ->
+        chrome.windows.getAll windowQuery, (allWindows) ->
           $log.info "window/#{ourWindow.id} tabs loaded \
             [#{if ourWindow.tabs? then ourWindow.tabs.length else 'none'}]"
           $timeout ->

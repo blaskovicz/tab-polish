@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "TabPolish",
   "description": "Cut down on the number of duplicate tabs you have open.",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "permissions": [
     "tabs",
     "storage"
