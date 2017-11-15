@@ -1,24 +1,24 @@
 {
-  "manifest_version": 2,
-  "name": "TabPolish",
-  "description": "Cut down on the number of duplicate tabs you have open.",
-  "version": "0.4.1",
-  "permissions": [
-    "tabs",
-    "storage"
-  ],
-  "background": {
-    "page": "options.html",
-  	"persistent": true
-  },
-  "icons": {
-    "16": "magic-10-icon-16.png",
-    "48": "magic-10-icon-48.png",
-    "128": "magic-10-icon-128.png"
-  },
-  "browser_action": {
-    "default_icon": "magic-10-icon-48.png",
-    "default_popup": "options.html"
-  },
-  "options_page": "options.html"
+    "manifest_version": 2,
+    "name": "TabPolish",
+    "description": "Cut down on the number of duplicate tabs you have open.",
+    "version": "v0.4.2",
+    "permissions": [
+        "tabs",
+        "storage"
+    ],
+    "background": {
+        "page": "options.html",
+        "persistent": true
+    },
+    "icons": {
+        "16": "magic-10-icon-16.png",
+        "48": "magic-10-icon-48.png",
+        "128": "magic-10-icon-128.png"
+    },
+    "browser_action": {
+        "default_icon": "magic-10-icon-48.png",
+        "default_popup": "options.html"
+    },
+    "options_page": "options.html"
 }
