@@ -1,6 +1,5 @@
 {
   "name": "TabPolish",
-  "version": "0.4.1",
   "description": "Manage tabs in Google Chrome.",
   "main": "options.html",
   "devDependencies": {

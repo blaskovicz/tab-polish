@@ -4,7 +4,7 @@ module.exports = (grunt) ->
     compress:
       main:
         options:
-          archive: '<%= pkg.name %>-<%= pkg.version %>.zip'
+          archive: '<%= pkg.name %>.zip'
         src: [
           'app.js'
           'bower_components/angular/angular.min.js'
