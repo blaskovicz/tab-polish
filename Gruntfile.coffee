@@ -1,3 +1,5 @@
+fs = require 'fs'
+child_process = require 'child_process'
 module.exports = (grunt) ->
   grunt.initConfig
     pkg: grunt.file.readJSON('package.json')
@@ -65,7 +67,12 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-coffee'
   grunt.loadNpmTasks 'grunt-coffeelint'
   grunt.loadNpmTasks 'grunt-exec'
-  grunt.registerTask 'build', ['htmlhint','sass','coffeelint','coffee']
+  grunt.registerTask 'manifest', ->
+    manifest = require './manifest.json'
+    gitVersion = child_process.execSync 'git describe --tags'
+    manifest.version = gitVersion.toString().trim().replace(/^v/, '') # eg: 0.4.2
+    fs.writeFileSync './manifest.json', JSON.stringify(manifest, null, 4) + "\n"
+  grunt.registerTask 'build', ['htmlhint','sass','coffeelint','coffee', 'manifest']
   grunt.registerTask 'dist', ['build', 'compress']
   grunt.registerTask 'preview', ['exec:chrome-preview']
   grunt.registerTask 'default', ['build','watch']
