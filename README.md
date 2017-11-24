@@ -1,4 +1,4 @@
-# TabPolish ![](https://github.com/blaskovicz/tabpolish/raw/master/magic-10-icon-16.png)  [![Build Status](https://travis-ci.org/blaskovicz/TabPolish.svg?branch=master)](https://travis-ci.org/blaskovicz/TabPolish)
+# TabPolish ![](https://github.com/blaskovicz/tabpolish/raw/master/magic-10-icon-16.png)  [![Build Status](https://travis-ci.org/blaskovicz/tab-polish.svg?branch=master)](https://travis-ci.org/blaskovicz/TabPolish)
 
 >A Chrome Extension to keep your tabs shiny (and organized)!
 
