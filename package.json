@@ -1,37 +1,19 @@
 {
-  "name": "TabPolish",
-  "description": "Manage tabs in Google Chrome.",
-  "main": "options.html",
-  "devDependencies": {
-    "bower": "^1.8.2",
-    "coffeelint": "^1.8.1",
-    "grunt": "^0.4.5",
-    "grunt-cli": "^1.2.0",
-    "grunt-coffeelint": "^0.0.13",
-    "grunt-contrib-coffee": "^0.12.0",
-    "grunt-contrib-compress": "^0.13.0",
-    "grunt-contrib-watch": "^0.6.1",
-    "grunt-exec": "^1.0.1",
-    "grunt-htmlhint": "^0.4.1",
-    "grunt-sass": "^2.0.0"
+  "name": "tab-polish",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "bootstrap": "^4.0.0-beta.2",
+    "jquery": "3",
+    "popper.js": "^1.12.3",
+    "react": "^16.1.1",
+    "react-dom": "^16.1.1",
+    "react-scripts": "1.0.17"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://blaskovicz@github.com/blaskovicz/TabPolish.git"
-  },
-  "keywords": [
-    "chrome",
-    "angular",
-    "tab",
-    "extension"
-  ],
-  "author": "Zach Auclair <zach101@gmail.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/blaskovicz/TabPolish/issues"
-  },
-  "homepage": "https://github.com/blaskovicz/TabPolish"
+    "start": "react-scripts start",
+    "build": "bash ./build.sh",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
 }

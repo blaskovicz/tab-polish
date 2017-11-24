@@ -1,0 +1,12 @@
+h2.title {
+  margin: 0;
+  padding: 0;
+  padding-top: 2px;
+  float: right;
+  font-family: monospace;
+  font-weight: 700;
+}
+h2.title img.logo {
+  height: 32px;
+  width: 32px;
+}

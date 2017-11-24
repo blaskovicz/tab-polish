@@ -1,0 +1,48 @@
+#active-windows {
+  margin-bottom: 10px;
+}
+#active-tabs {
+  padding: 0 5px 0 5px;
+  background: #fff;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 15px;
+}
+#active-tabs label.tab-description {
+  display: block;
+  max-width: 600px;
+}
+#active-tabs label.tab-description:not(:last-of-type) {
+  border-bottom: 1px solid #f7f7f7;
+}
+#active-tabs label.tab-description:hover {
+  color: gray;
+  cursor: pointer;
+}
+#active-tabs label.tab-description:hover input {
+  cursor: pointer;
+}
+#active-tabs label.tab-description:hover img.favicon {
+  opacity: 0.6;
+}
+#active-tabs label.tab-description img.favicon {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+}
+#active-tabs label.tab-description small.subtext {
+  display: block;
+  max-width: 500px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#active-tabs label.tab-description span {
+  vertical-align: top;
+}
+#tab-control-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+#tab-control-buttons .btn {
+  flex-basis: 49%;
+}

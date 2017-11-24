@@ -1,22 +1,19 @@
 language: node_js
 node_js:
-- '8'
+  - '8'
 install:
-- npm install
-- bower install
+  - yarn install
 script:
-  - grunt build
-  - grunt dist
+  - yarn build
 cache:
   directories:
   - node_modules
-  - bower_components
 deploy:
   skip_cleanup: true
   provider: releases
   api_key:
     secure: KKVPr98KNa0D3/yKOtQH2J+Ry72c9su/QBbj4+nLncBOEJA7+KE9G9T99naImhgFTXdm877kA+SfS8uL/IVEtn+wMvHo7bFpaVi0l11KrR+z8bbpO324fI2Z4whiS53tF2YmNUWmM8cGosWbgyJ4xQpFwarKdFeq8LRJkqN3Mc0=
-  file: TabPolish.zip
+  file: tab-polish.zip
   on:
-    repo: blaskovicz/TabPolish
+    repo: blaskovicz/tab-polish
     tags: true

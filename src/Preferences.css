@@ -1,0 +1,9 @@
+#polish-options {
+  background: #fff;
+  padding: 0 5px 0 5px;
+  margin-bottom: 5px;
+}
+#polish-options label:hover {
+  color: gray;
+  cursor: pointer;
+}

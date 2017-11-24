@@ -2,13 +2,13 @@
     "manifest_version": 2,
     "name": "TabPolish",
     "description": "Cut down on the number of duplicate tabs you have open.",
-    "version": "v0.4.2",
+    "version": "@@VERSION@@",
     "permissions": [
         "tabs",
         "storage"
     ],
     "background": {
-        "page": "options.html",
+        "page": "index.html",
         "persistent": true
     },
     "icons": {
@@ -18,7 +18,7 @@
     },
     "browser_action": {
         "default_icon": "magic-10-icon-48.png",
-        "default_popup": "options.html"
+        "default_popup": "index.html"
     },
-    "options_page": "options.html"
+    "options_page": "index.html"
 }

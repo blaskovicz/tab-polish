@@ -1,14 +1,16 @@
-# TabPolish ![](https://github.com/blaskovicz/tabpolish/raw/master/magic-10-icon-48.png)  [![Build Status](https://travis-ci.org/blaskovicz/TabPolish.svg?branch=master)](https://travis-ci.org/blaskovicz/TabPolish)
+# TabPolish ![](https://github.com/blaskovicz/tabpolish/raw/master/magic-10-icon-16.png)  [![Build Status](https://travis-ci.org/blaskovicz/TabPolish.svg?branch=master)](https://travis-ci.org/blaskovicz/TabPolish)
 
 >A Chrome Extension to keep your tabs shiny (and organized)!
 
 ### Developing
 
-0. Make sure you have Google Chrome installed.
-1. Make sure you have [NodeJS](https://nodejs.org/) installed.
-2. Clone the code - `git clone https://github.com/blaskovicz/TabPolish && cd TabPolish`
-3. Install NodeJS dependencies - `npm install`
-4. Install Bower dependencies - `$(npm bin)/bower install`
-5. Launch grunt to continously build sources - `$(npm bin)/grunt`
-6. Make changes to the files and view an extension preview - `$(npm bin)/grunt preview`
-7. To release - `$(npm bin)/grunt dist` and upload the zip to the Chrome Developer dashboard
+0. Make sure you have [Google Chrome](https://www.google.com/chrome/) and [NodeJS](https://nodejs.org/) installed.
+1. `$ git clone https://github.com/blaskovicz/tab-polish && cd tab-polish`
+2. `$ yarn install # install node dependencies`
+3. `$ yarn # start webpack and development server; uses ChromeMock for ui`
+4. `$ yarn build # build tab-polish.zip; needs to be done each time you load extension for next step`
+5. To load the extension:
+    1. open [chrome://extensions](chrome://extensions)
+    2. enable developer mode
+    3. browse to the build folder and click open
+
