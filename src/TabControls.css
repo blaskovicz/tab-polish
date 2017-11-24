@@ -2,6 +2,7 @@
   margin-bottom: 10px;
 }
 #active-tabs {
+  border: 1px solid #cfd5db;
   padding: 0 5px 0 5px;
   background: #fff;
   max-height: 300px;
@@ -13,10 +14,10 @@
   max-width: 600px;
 }
 #active-tabs label.tab-description:not(:last-of-type) {
-  border-bottom: 1px solid #f7f7f7;
+  border-bottom: 1px solid #d6d6d6;
 }
 #active-tabs label.tab-description:hover {
-  color: gray;
+  color: rgb(128, 128, 128);
   cursor: pointer;
 }
 #active-tabs label.tab-description:hover input {

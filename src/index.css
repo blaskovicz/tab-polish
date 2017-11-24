@@ -7,8 +7,8 @@ body {
 }
 label {
   font-weight: 500;
-  margin-bottom: 1px;
-  margin-top: 1px;
+  margin-bottom: 2px;
+  margin-top: 2px;
 }
 button:hover:not(:disabled),
 input[type="checkbox"]:hover:not(:disabled),
