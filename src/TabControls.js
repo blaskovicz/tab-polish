@@ -3,6 +3,8 @@ import {
   WINDOW_TYPE_NORMAL,
   DEFAULT_PREFERENCES,
   TAB_STATUS_COMPLETE,
+  PREFERENCE_TREAT_TAB_URL_PATHS_AS_UNIQUE,
+  PREFERENCE_TREAT_TAB_URL_FRAGMENTS_AS_UNIQUE,
   PREFERENCE_CLOSE_OLD_TABS
 } from "./lib/Constants";
 import Chrome from "./lib/Chrome";
@@ -71,12 +73,22 @@ export default class TabControls extends Component {
         if (!tabs || tabs.length < 2) return; // less than 2 tabs matching, bail.
 
         const closeOldTabs = preferences[PREFERENCE_CLOSE_OLD_TABS];
+        const uniquePaths =
+          preferences[PREFERENCE_TREAT_TAB_URL_PATHS_AS_UNIQUE];
+        const uniqueFragments =
+          preferences[PREFERENCE_TREAT_TAB_URL_FRAGMENTS_AS_UNIQUE];
         const tabURL = new URL(tab.url);
 
         // filter us down to only tabs in the window matching the updated tab
+        // TODO support fragment and query params
         tabs = tabs.filter(matchingTab => {
           const matchingTabURL = new URL(matchingTab.url);
-          return matchingTabURL.hostname === tabURL.hostname;
+          return (
+            matchingTabURL.hostname === tabURL.hostname &&
+            matchingTabURL.port === tabURL.port &&
+            (!uniquePaths || matchingTabURL.pathname === tabURL.pathname) &&
+            (!uniqueFragments || matchingTabURL.hash === tabURL.hash)
+          );
         });
 
         let tabToActivate;
@@ -260,7 +272,7 @@ export default class TabControls extends Component {
                         /* TODO: className="glyphicon glyphicon-pushpin" */
                         aria-hidden="true"
                       >
-                        {"<pinned>"}
+                        {"<pinned> "}
                       </small>
                     )}
                     {tab.title}
