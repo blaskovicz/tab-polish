@@ -282,8 +282,8 @@ export default class TabControls extends Component {
     const allSelected = this.allSelected();
     const anySelected = allSelected || this.anySelected();
     return (
-      <div>
-        <h3>Move Tabs to Window</h3>
+      <div id="tab-controls">
+        <h4 className="title">Move Tabs to Window</h4>
         <div id="active-tabs">
           <form>
             {currentWindow &&

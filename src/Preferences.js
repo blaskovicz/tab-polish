@@ -43,27 +43,22 @@ export default class Preferences extends Component {
   render() {
     const { state } = this;
     return (
-      <div>
-        <h3>Options</h3>
-        <div id="polish-options">
-          {Object.keys(DEFAULT_PREFERENCES).map(option => {
-            const loading = state[option] === undefined;
-            return (
-              <label key={option}>
-                <input
-                  disabled={loading}
-                  type="checkbox"
-                  name={option}
-                  onChange={this.updatePref}
-                  checked={
-                    loading ? DEFAULT_PREFERENCES[option] : state[option]
-                  }
-                />{" "}
-                {option.replace(/-/g, " ")}
-              </label>
-            );
-          })}
-        </div>
+      <div id="polish-options">
+        {Object.keys(DEFAULT_PREFERENCES).map(option => {
+          const loading = state[option] === undefined;
+          return (
+            <label key={option}>
+              <input
+                disabled={loading}
+                type="checkbox"
+                name={option}
+                onChange={this.updatePref}
+                checked={loading ? DEFAULT_PREFERENCES[option] : state[option]}
+              />{" "}
+              {option.replace(/-/g, " ")}
+            </label>
+          );
+        })}
       </div>
     );
   }

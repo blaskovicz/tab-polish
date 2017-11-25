@@ -4,11 +4,14 @@ body {
   max-height: 600px;
   background: rgb(249, 249, 249);
   overflow-y: hidden;
+  line-height: normal !important;
 }
 label {
   font-weight: 500;
-  margin-bottom: 2px;
-  margin-top: 2px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  margin-bottom: 3px;
+  margin-top: 3px;
 }
 button:hover:not(:disabled),
 input[type="checkbox"]:hover:not(:disabled),

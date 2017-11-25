@@ -1,3 +1,10 @@
+#tab-controls {
+  display: flex;
+  flex-direction: column;
+}
+#tab-controls h4.title {
+  align-self: center;
+}
 #active-windows {
   margin-bottom: 10px;
 }
@@ -7,7 +14,7 @@
   background: #fff;
   max-height: 300px;
   overflow-y: auto;
-  margin-bottom: 15px;
+  margin-bottom: 5px;
 }
 #active-tabs label.tab-description {
   display: block;
@@ -30,6 +37,8 @@
   width: 16px;
   height: 16px;
   vertical-align: middle;
+  position: relative;
+  top: -3px;
 }
 #active-tabs label.tab-description small.subtext {
   display: block;
