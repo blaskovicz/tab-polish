@@ -5,8 +5,10 @@ import {
   TAB_STATUS_COMPLETE,
   PREFERENCE_TREAT_TAB_URL_PATHS_AS_UNIQUE,
   PREFERENCE_TREAT_TAB_URL_FRAGMENTS_AS_UNIQUE,
+  PREFERENCE_TREAT_TAB_URL_SEARCH_PARAMS_AS_UNIQUE,
   PREFERENCE_CLOSE_OLD_TABS
 } from "./lib/Constants";
+import { searchParamsMatch } from "./lib/Utils";
 import Chrome from "./lib/Chrome";
 import "./TabControls.css";
 
@@ -38,9 +40,17 @@ export default class TabControls extends Component {
     Chrome.tabs.onRemoved.addListener(this.loadCurrentWindow);
   };
   polishTabs = (tabId, changeInfo, tab) => {
+    // TODO we may want to close a tab before it's 'complete' so we don't
+    // waste the cycles/memory/time loading it only to close it...
     if (this.polishing || changeInfo.status !== TAB_STATUS_COMPLETE) {
       return;
     }
+    console.log(
+      `ref=tab-controls.polish-tabs at=start polishing=${this.polishing} tab=`,
+      tab,
+      "changeInfo=",
+      changeInfo
+    );
     this.polishing = true;
     const preferencesP = new Promise((resolve, reject) => {
       Chrome.storage.sync.get(DEFAULT_PREFERENCES, items => {
@@ -52,12 +62,11 @@ export default class TabControls extends Component {
       });
     });
     const tabsP = new Promise((resolve, reject) => {
-      console.log("polishTabs", tab.url);
       Chrome.tabs.query(
         {
           status: TAB_STATUS_COMPLETE,
           windowType: WINDOW_TYPE_NORMAL,
-          windowId: Chrome.windows.WINDOW_ID_CURRENT
+          windowId: tab.windowId
           // note we can't use the 'url' param here because it won't
           // filter against some chrome:// special urls
         },
@@ -77,17 +86,23 @@ export default class TabControls extends Component {
           preferences[PREFERENCE_TREAT_TAB_URL_PATHS_AS_UNIQUE];
         const uniqueFragments =
           preferences[PREFERENCE_TREAT_TAB_URL_FRAGMENTS_AS_UNIQUE];
+        const uniqueSearchParams =
+          preferences[PREFERENCE_TREAT_TAB_URL_SEARCH_PARAMS_AS_UNIQUE];
         const tabURL = new URL(tab.url);
 
         // filter us down to only tabs in the window matching the updated tab
-        // TODO support fragment and query params
         tabs = tabs.filter(matchingTab => {
           const matchingTabURL = new URL(matchingTab.url);
           return (
             matchingTabURL.hostname === tabURL.hostname &&
             matchingTabURL.port === tabURL.port &&
             (!uniquePaths || matchingTabURL.pathname === tabURL.pathname) &&
-            (!uniqueFragments || matchingTabURL.hash === tabURL.hash)
+            (!uniqueFragments || matchingTabURL.hash === tabURL.hash) &&
+            (!uniqueSearchParams ||
+              searchParamsMatch(
+                matchingTabURL.searchParams,
+                tabURL.searchParams
+              ))
           );
         });
 
@@ -101,7 +116,12 @@ export default class TabControls extends Component {
           // activate the first tab that's not us, close all others
           tabToActivate = tabs.find(matchingTab => matchingTab.id !== tab.id);
           if (!tabToActivate) {
-            console.warn("polishTabs: no tabToActivate", tabs, tab);
+            console.log(
+              `ref=tab-controls.polish-tabs at=missing-tab-to-activate tab.url=${
+                tab.url
+              } tab.status=${changeInfo.status} tab.id=${tabId} tabs=`,
+              tabs
+            );
           } else {
             tabsToClose = tabs.filter(
               matchingTab => matchingTab.id !== tabToActivate.id
@@ -110,7 +130,12 @@ export default class TabControls extends Component {
         }
 
         const actions = [];
+
         if (tabsToClose && tabsToClose.length !== 0) {
+          console.log(
+            `ref=tab-controls.polish-tabs at=remove-tabs tabs=`,
+            tabsToClose
+          );
           actions.push(
             new Promise((resolve, reject) => {
               Chrome.tabs.remove(
@@ -122,7 +147,12 @@ export default class TabControls extends Component {
             })
           );
         }
+
         if (tabToActivate && !tabToActivate.active) {
+          console.log(
+            `ref=tab-controls.polish-tabs at=activate-tab tab=`,
+            tabToActivate
+          );
           actions.push(
             new Promise((resolve, reject) => {
               Chrome.tabs.update(tabToActivate.id, { active: true }, () => {
@@ -138,11 +168,12 @@ export default class TabControls extends Component {
         this.polishing = false;
       })
       .catch(e => {
-        console.warn("polishTabs", e);
+        console.log(`ref=tab-controls.polish-tabs at=error`, e);
         this.polishing = false;
       });
   };
   loadCurrentWindow = () => {
+    console.log("ref=tab-controls.load-current-window at=start");
     const currentWindowP = new Promise((resolve, reject) => {
       Chrome.windows.getCurrent(this.constructor.windowQuery, currentWindow => {
         resolve(currentWindow);
@@ -169,6 +200,12 @@ export default class TabControls extends Component {
   };
   moveSelectedTabs = () => {
     const { nextWindowTab, selectedTabs } = this.state;
+    console.log(
+      "ref=tab-controls.move-selected-tabs at=start next-window-tab=",
+      nextWindowTab,
+      "selectedTabs=",
+      selectedTabs
+    );
 
     let nextWindowP;
     const selectedTabsArray = Array.from(selectedTabs.values());

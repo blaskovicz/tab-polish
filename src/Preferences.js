@@ -15,6 +15,7 @@ export default class Preferences extends Component {
   }
 
   loadPrefs = () => {
+    //console.log(`ref=preferences.load at=start`);
     Chrome.storage.sync.get(DEFAULT_PREFERENCES, items => {
       if (Chrome.runtime.lastError) {
         console.warn(Chrome.runtime.lastError);
@@ -29,6 +30,7 @@ export default class Preferences extends Component {
     const value = target.type === "checkbox" ? target.checked : target.value;
     const name = target.name;
     const pref = { [name]: value };
+    console.log(`ref=preferences.update at=start name=${name} value=${value}`);
     Chrome.storage.sync.set(pref, () => {
       if (Chrome.runtime.lastError) {
         console.warn(Chrome.runtime.lastError);
