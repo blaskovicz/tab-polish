@@ -1,10 +1,7 @@
-body {
-  padding: 5px;
-  width: 500px;
-  max-height: 600px;
-  background: rgb(249, 249, 249);
-  overflow-y: hidden;
-  line-height: normal !important;
+#root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 label {
   font-weight: 500;

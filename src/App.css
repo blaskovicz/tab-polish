@@ -1,6 +1,12 @@
 div.app {
   display: flex;
   flex-direction: column;
+  padding: 5px;
+  width: 500px;
+  max-height: 600px;
+  background: rgb(249, 249, 249);
+  overflow-y: hidden;
+  line-height: normal !important;
 }
 h2.title {
   margin: 0;
