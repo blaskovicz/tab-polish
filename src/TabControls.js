@@ -129,9 +129,27 @@ export default class TabControls extends Component {
           }
         }
 
+        const haveTabsToClose = tabsToClose && tabsToClose.length !== 0;
+        const closingActiveTabs =
+          haveTabsToClose &&
+          tabsToClose.some(matchingTab => matchingTab.active);
         const actions = [];
 
-        if (tabsToClose && tabsToClose.length !== 0) {
+        if (tabToActivate && !tabToActivate.active && closingActiveTabs) {
+          console.log(
+            `ref=tab-controls.polish-tabs at=activate-tab tab=`,
+            tabToActivate
+          );
+          actions.push(
+            new Promise((resolve, reject) => {
+              Chrome.tabs.update(tabToActivate.id, { active: true }, () => {
+                resolve();
+              });
+            })
+          );
+        }
+
+        if (haveTabsToClose) {
           console.log(
             `ref=tab-controls.polish-tabs at=remove-tabs tabs=`,
             tabsToClose
@@ -148,19 +166,6 @@ export default class TabControls extends Component {
           );
         }
 
-        if (tabToActivate && !tabToActivate.active) {
-          console.log(
-            `ref=tab-controls.polish-tabs at=activate-tab tab=`,
-            tabToActivate
-          );
-          actions.push(
-            new Promise((resolve, reject) => {
-              Chrome.tabs.update(tabToActivate.id, { active: true }, () => {
-                resolve();
-              });
-            })
-          );
-        }
         // TODO focus window?
         return Promise.all(actions);
       })
