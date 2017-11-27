@@ -1,0 +1,11 @@
+{
+  "editor.formatOnSave": true,
+  "prettier.singleQuote": false,
+  "prettier.printWidth": 80,
+  "prettier.trailingComma": "none",
+  "extensions.ignoreRecommendations": true,
+  "files.eol": "\n",
+  "editor.tabSize": 2,
+  "editor.trimAutoWhitespace": true,
+  "editor.insertSpaces": true
+}
