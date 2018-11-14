@@ -56,8 +56,17 @@ export default class Preferences extends Component {
           className={`btn btn-sm btn-link ${state.open && "button-open"}`}
           onClick={this.toggleOptions}
         >
-          Options
+          options
         </button>
+        <span id="help" className="btn btn-link help">
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://github.com/blaskovicz/tab-polish/issues"
+          >
+            help
+          </a>
+        </span>
         {state.open && (
           <div id="polish-options">
             <div className="button-close-align">

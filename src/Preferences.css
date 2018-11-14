@@ -3,8 +3,10 @@
   position: relative;
   font-family: sans-serif;
 }
-#polish-options-wrapper button {
-  color: #000;
+#polish-options-wrapper button,
+#polish-options-wrapper #help a,
+#polish-options-wrapper #help a:hover {
+  color: #000 !important;
   font-size: 10pt;
 }
 #polish-options-wrapper .button-open {
