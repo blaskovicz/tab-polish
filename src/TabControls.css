@@ -21,7 +21,6 @@
   padding: 0 5px 0 5px;
   background: #fff;
   max-height: 600px;
-  overflow-y: auto;
 }
 #active-tabs label.tab-description {
   display: block;
