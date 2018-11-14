@@ -267,7 +267,7 @@ export default class TabControls extends Component {
   changeSort = e => {
     this.setState({ sortTabsBy: e.target.value });
   };
-  sortTabs = () => {
+  sortTabs = async () => {
     const { sortTabsBy, selectedTabs, currentWindow } = this.state;
     if (
       selectedTabs.size < 0 ||
@@ -292,61 +292,54 @@ export default class TabControls extends Component {
     const [field, direction] = sortTabsBy.split("_", 2);
     const originalTabLocations = selectedTabsFull
       .sort((a, b) => {
-        // sort by tab index, descending
-        return b.index - a.index;
+        // sort by tab index, asc
+        return a.index - b.index;
       })
       .map(t => ({ id: t.id, index: t.index }));
     const newTabLocations = selectedTabsFull.sort((a, b) => {
       // sort by field as requested
-      const aVal = a[field];
-      const bVal = b[field];
+      const aVal = a[field].toLocaleLowerCase();
+      const bVal = b[field].toLocaleLowerCase();
       let result = aVal.localeCompare(bVal);
-      if (direction === "asc") {
+      if (result === 0) {
+        result = a.id - b.id;
+      }
+      if (direction === "desc") {
         return -1 * result;
       }
       return result;
     });
 
     // schedule one move for each tab since we may not be sorting all tabs in the window
-    // for example:
-    // 0) [0, 1, 2*, 3, 4*]
-    // 1) [0, 1, 4*, 2*, 3]
-    // 2) [0, 1, 4*, 3, 2*]
-    // move the highest index tab first so we don't incorrectly adjust indicies
-    const actions = [];
-    for (let i = 0; i < originalTabLocations.length; i++) {
-      const tabToSwap = originalTabLocations[i];
-      const newTabLocation = newTabLocations.findIndex(
-        t => t.id === tabToSwap.id
-      );
-      if (newTabLocation === -1) {
-        throw new Error(`Failed to locate tab=${tabToSwap.id} for swap ${i}`);
-      }
-      if (newTabLocation === tabToSwap.index) continue;
+    // move the lowest new index tab first so we don't incorrectly adjust indicies
+    for (let i = 0; i < newTabLocations.length; i++) {
+      const tabToSwap = newTabLocations[i];
+      const newTabLocation = originalTabLocations[i];
       console.log(
         `ref=tab-controls.sort-tabs at=swap tab.id=${tabToSwap.id} tab.src=${
           tabToSwap.index
-        } tab.dest=${newTabLocation}`
+        } tab.dest=${newTabLocation.index}`
       );
-      actions.push(
-        new Promise((resolve, reject) => {
-          Chrome.tabs.move(tabToSwap.id, { index: newTabLocation }, () => {
-            resolve();
-          });
-        })
-      );
+      try {
+        await new Promise((resolve, reject) => {
+          Chrome.tabs.move(
+            tabToSwap.id,
+            { index: newTabLocation.index },
+            () => {
+              resolve();
+            }
+          );
+        });
+      } catch (e) {
+        console.warn(`ref=tab-controls.sort-tabs at=error`, e);
+        break;
+      }
     }
 
-    Promise.all(actions)
-      .then(() => {
-        this.polishing = false;
-        this.loadCurrentWindow();
-      })
-      .catch(e => {
-        console.warn(`ref=tab-controls.sort-tabs at=error`, e);
-        this.polishing = false;
-      });
+    this.polishing = false;
+    this.loadCurrentWindow();
   };
+
   setSelectionAll = e => {
     const { selectedTabs, currentWindow } = this.state;
     if (!currentWindow) return;
@@ -388,6 +381,16 @@ export default class TabControls extends Component {
     const anySelected = allSelected || this.anySelected();
     return (
       <div id="tab-controls">
+        <label htmlFor="select-all-tabs">
+          <input
+            disabled={!currentWindow}
+            type="checkbox"
+            id="select-all-tabs"
+            onChange={this.setSelectionAll}
+            value={allSelected}
+          />
+          Select All
+        </label>
         <div id="active-tabs">
           <form>
             {currentWindow &&
@@ -423,16 +426,6 @@ export default class TabControls extends Component {
                 </label>
               ))}
           </form>
-          <label htmlFor="select-all-tabs">
-            <input
-              disabled={!currentWindow}
-              type="checkbox"
-              id="select-all-tabs"
-              onChange={this.setSelectionAll}
-              value={allSelected}
-            />
-            Select All
-          </label>
         </div>
         <div id="active-windows">
           <button

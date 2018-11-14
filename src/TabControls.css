@@ -11,6 +11,11 @@
 #active-windows {
   margin-bottom: 6px;
 }
+#active-tabs {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 6px;
+}
 #active-tabs form {
   border: 1px solid #cfd5db;
   padding: 0 5px 0 5px;
