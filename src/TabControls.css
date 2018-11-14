@@ -1,5 +1,6 @@
 #tab-controls {
   display: flex;
+  min-height: 200px;
   flex-direction: column;
 }
 #tab-controls h4.title {
@@ -10,13 +11,12 @@
 #active-windows {
   margin-bottom: 6px;
 }
-#active-tabs {
+#active-tabs form {
   border: 1px solid #cfd5db;
   padding: 0 5px 0 5px;
   background: #fff;
-  max-height: 300px;
+  max-height: 600px;
   overflow-y: auto;
-  margin-bottom: 5px;
 }
 #active-tabs label.tab-description {
   display: block;
@@ -29,8 +29,12 @@
   color: rgb(128, 128, 128);
   cursor: pointer;
 }
-#active-tabs label.tab-description:hover input {
+#active-tabs label {
   cursor: pointer;
+}
+#select-all-tabs {
+  margin-right: 5px;
+  margin-left: 6px;
 }
 #active-tabs label.tab-description:hover img.favicon {
   opacity: 0.6;
@@ -52,10 +56,15 @@
 #active-tabs label.tab-description span {
   vertical-align: top;
 }
-#tab-control-buttons {
+#tab-control-buttons,
+#active-windows {
   display: flex;
   justify-content: space-between;
 }
-#tab-control-buttons .btn {
+#tab-control-buttons .btn,
+#move-to-window,
+#select-window,
+#sort-tabs-by,
+#sort-tabs {
   flex-basis: 49%;
 }

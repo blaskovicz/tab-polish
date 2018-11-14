@@ -19,8 +19,8 @@ class App extends Component {
         <h2 className="title">
           <img className="logo" src={logo} alt="logo" />
           TabPolish
+          <Preferences />
         </h2>
-        <Preferences />
         <TabControls />
       </div>
     );

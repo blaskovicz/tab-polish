@@ -9,6 +9,7 @@ class MockChrome {
         type: WINDOW_TYPE_NORMAL,
         tabs: [
           {
+            index: 0,
             active: true,
             id: 9,
             windowId: 1,
@@ -18,6 +19,7 @@ class MockChrome {
             favIconUrl: "https://www.google.com/favicon.ico"
           },
           {
+            index: 1,
             active: false,
             id: 33,
             windowId: 1,
@@ -33,6 +35,7 @@ class MockChrome {
         type: WINDOW_TYPE_NORMAL,
         tabs: [
           {
+            index: 0,
             active: true,
             id: 23,
             windowId: 2,
@@ -46,34 +49,53 @@ class MockChrome {
     ];
   }
   // simulate moving a tab
-  _moveTab(tabId, windowId) {
+  _moveTab(tabId, { windowId = this._windows[0].id, index = -1 }) {
     let foundTab;
     const foundWindow = this._windows.find(w => w.id === windowId);
     if (foundWindow === undefined) {
-      throw new Error("couldn't find window");
+      throw new Error(`could not find window ${windowId}`);
     }
     for (let i = 0; i < this._windows.length; i++) {
       const w = this._windows[i];
       foundTab = w.tabs.findIndex(t => t.id === tabId);
-      if (foundTab) {
-        const lastTab = w.tabs.length === 1;
-        foundTab = w.tabs.splice(foundTab, 1);
-        foundTab.windowId = windowId;
-        if (foundTab.active) {
-          if (lastTab) {
+      if (foundTab === -1) {
+        continue;
+      }
+      const lastTab = w.tabs.length === 1;
+      foundTab = w.tabs.splice(foundTab, 1)[0]; // remove tab from old window index
+      if (foundTab.active) {
+        if (lastTab) {
+          if (foundTab.windowId !== windowId) {
             w.tombstone = true; // for anyone that has a reference
             this._windows.splice(i, 1);
-          } else {
-            w.tabs[0].active = true;
           }
-          foundTab.active = false;
+        } else {
+          w.tabs[0].active = true;
         }
-        foundWindow.tabs.push(foundTab);
-        break;
+        foundTab.active = false;
       }
+
+      // add tab to new window/location
+      foundTab.windowId = windowId;
+      foundWindow.tabs.splice(
+        index === -1 ? foundWindow.tabs.length - 1 : index,
+        0,
+        foundTab
+      );
+      break;
     }
     if (foundTab === undefined) {
       throw new Error("couldn't find tab");
+    }
+    this._orderTabs();
+  }
+  _orderTabs() {
+    for (const w of this._windows) {
+      let index = 0;
+      for (const t of w.tabs) {
+        t.index = index;
+        index++;
+      }
     }
   }
   get tabs() {
@@ -100,9 +122,14 @@ class MockChrome {
         if (cb) cb();
       },
       move(tabs, options, cb) {
+        if (typeof tabs === "number") {
+          tabs = [tabs];
+        }
+        if (!(tabs instanceof Array) || tabs.some(t => typeof t !== "number"))
+          throw new Error("invalid tabs must be array of numbers");
         console.log("tabs.move", tabs, options);
         for (let tab of tabs) {
-          self._moveTab(tab.id, options.windowId);
+          self._moveTab(tab, options);
         }
         cb();
       },

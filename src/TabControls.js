@@ -19,6 +19,12 @@ export default class TabControls extends Component {
     title: "-- new window --",
     windowId: -1000
   };
+  static SORT_OPTIONS = [
+    { title: "By Title, Asc", value: "title_asc" },
+    { title: "By Title, Desc", value: "title_desc" },
+    { title: "By URL, Asc", value: "url_asc" },
+    { title: "By URL, Desc", value: "url_desc" }
+  ];
   constructor(props) {
     super(props);
     this.polishing = false;
@@ -26,7 +32,8 @@ export default class TabControls extends Component {
       selectedTabs: new Set(),
       currentWindow: null,
       nextTabs: [],
-      nextWindowTab: null
+      nextWindowTab: null,
+      sortTabsBy: this.constructor.SORT_OPTIONS[0].value
     };
   }
   componentWillMount() {
@@ -173,7 +180,7 @@ export default class TabControls extends Component {
         this.polishing = false;
       })
       .catch(e => {
-        console.log(`ref=tab-controls.polish-tabs at=error`, e);
+        console.warn(`ref=tab-controls.polish-tabs at=error`, e);
         this.polishing = false;
       });
   };
@@ -257,11 +264,93 @@ export default class TabControls extends Component {
     }
     this.setState({ selectedTabs });
   };
-  setSelectionAll = () => {
+  changeSort = e => {
+    this.setState({ sortTabsBy: e.target.value });
+  };
+  sortTabs = () => {
+    const { sortTabsBy, selectedTabs, currentWindow } = this.state;
+    if (
+      selectedTabs.size < 0 ||
+      !currentWindow ||
+      !currentWindow.tabs ||
+      this.polishing
+    )
+      return;
+    console.log(`ref=tab-controls.sort-tabs at=start`);
+    this.polishing = true;
+
+    const selectedTabsFull = currentWindow.tabs.filter(t =>
+      selectedTabs.has(t.id)
+    );
+    if (selectedTabsFull.length !== selectedTabs.size) {
+      throw new Error(
+        `Failed to locate all tabs; selected=${selectedTabs.size}, found=${
+          selectedTabsFull.length
+        }`
+      );
+    }
+    const [field, direction] = sortTabsBy.split("_", 2);
+    const originalTabLocations = selectedTabsFull
+      .sort((a, b) => {
+        // sort by tab index, descending
+        return b.index - a.index;
+      })
+      .map(t => ({ id: t.id, index: t.index }));
+    const newTabLocations = selectedTabsFull.sort((a, b) => {
+      // sort by field as requested
+      const aVal = a[field];
+      const bVal = b[field];
+      let result = aVal.localeCompare(bVal);
+      if (direction === "asc") {
+        return -1 * result;
+      }
+      return result;
+    });
+
+    // schedule one move for each tab since we may not be sorting all tabs in the window
+    // for example:
+    // 0) [0, 1, 2*, 3, 4*]
+    // 1) [0, 1, 4*, 2*, 3]
+    // 2) [0, 1, 4*, 3, 2*]
+    // move the highest index tab first so we don't incorrectly adjust indicies
+    const actions = [];
+    for (let i = 0; i < originalTabLocations.length; i++) {
+      const tabToSwap = originalTabLocations[i];
+      const newTabLocation = newTabLocations.findIndex(
+        t => t.id === tabToSwap.id
+      );
+      if (newTabLocation === -1) {
+        throw new Error(`Failed to locate tab=${tabToSwap.id} for swap ${i}`);
+      }
+      if (newTabLocation === tabToSwap.index) continue;
+      console.log(
+        `ref=tab-controls.sort-tabs at=swap tab.id=${tabToSwap.id} tab.src=${
+          tabToSwap.index
+        } tab.dest=${newTabLocation}`
+      );
+      actions.push(
+        new Promise((resolve, reject) => {
+          Chrome.tabs.move(tabToSwap.id, { index: newTabLocation }, () => {
+            resolve();
+          });
+        })
+      );
+    }
+
+    Promise.all(actions)
+      .then(() => {
+        this.polishing = false;
+        this.loadCurrentWindow();
+      })
+      .catch(e => {
+        console.warn(`ref=tab-controls.sort-tabs at=error`, e);
+        this.polishing = false;
+      });
+  };
+  setSelectionAll = e => {
     const { selectedTabs, currentWindow } = this.state;
     if (!currentWindow) return;
-    const select = !this.allSelected();
-    if (select) {
+    if (e.target.checked) {
       for (let tab of currentWindow.tabs) {
         selectedTabs.add(tab.id);
       }
@@ -278,17 +367,27 @@ export default class TabControls extends Component {
   };
   allSelected = () => {
     const { currentWindow, selectedTabs } = this.state;
-    return (
+    return !!(
       currentWindow && currentWindow.tabs.every(tab => selectedTabs.has(tab.id))
     );
   };
+  static MAX_URL = 120;
+  static shortUrl(tabUrl) {
+    if (tabUrl.length <= this.MAX_URL) return tabUrl;
+    return `${tabUrl.substring(0, this.MAX_URL)}...`;
+  }
   render() {
-    const { nextTabs, currentWindow, selectedTabs, nextWindowTab } = this.state;
+    const {
+      nextTabs,
+      currentWindow,
+      selectedTabs,
+      nextWindowTab,
+      sortTabsBy
+    } = this.state;
     const allSelected = this.allSelected();
     const anySelected = allSelected || this.anySelected();
     return (
       <div id="tab-controls">
-        <h4 className="title">Move Tabs to Window</h4>
         <div id="active-tabs">
           <form>
             {currentWindow &&
@@ -299,14 +398,13 @@ export default class TabControls extends Component {
                     checked={selectedTabs.has(tab.id)}
                     onChange={() => this.toggleSelect(tab)}
                   />{" "}
-                  {tab.favIconUrl &&
-                    tab.favIconUrl !== "" && (
-                      <img
-                        className="favicon"
-                        src={tab.favIconUrl}
-                        alt="favicon"
-                      />
-                    )}
+                  {tab.favIconUrl && tab.favIconUrl !== "" && (
+                    <img
+                      className="favicon"
+                      src={tab.favIconUrl}
+                      alt="favicon"
+                    />
+                  )}
                   <span>
                     {tab.pinned && (
                       <small
@@ -314,43 +412,31 @@ export default class TabControls extends Component {
                         /* TODO: className="glyphicon glyphicon-pushpin" */
                         aria-hidden="true"
                       >
-                        {"<pinned> "}
+                        <i>pinned </i>
                       </small>
                     )}
                     {tab.title}
-                    <small className="subtext">{tab.url}</small>
+                    <small className="subtext" title={tab.url}>
+                      {this.constructor.shortUrl(tab.url)}
+                    </small>
                   </span>
                 </label>
               ))}
           </form>
+          <label htmlFor="select-all-tabs">
+            <input
+              disabled={!currentWindow}
+              type="checkbox"
+              id="select-all-tabs"
+              onChange={this.setSelectionAll}
+              value={allSelected}
+            />
+            Select All
+          </label>
         </div>
         <div id="active-windows">
-          {nextWindowTab &&
-            nextTabs && (
-              <select
-                className="form-control input-sm"
-                value={nextWindowTab.windowId}
-                onChange={this.updateNextWindow}
-              >
-                {nextTabs.map(tab => (
-                  <option key={tab.windowId} value={tab.windowId}>
-                    {tab.title}
-                  </option>
-                ))}
-              </select>
-            )}
-        </div>
-        <div id="tab-control-buttons">
           <button
-            className="btn btn-default"
-            type="button"
-            disabled={!currentWindow}
-            onClick={this.setSelectionAll}
-          >
-            {allSelected ? "Deselect" : "Select"} All Tabs
-          </button>
-          <button
-            className="btn btn-primary"
+            className="btn btn-outline-dark"
             disabled={
               !anySelected ||
               (allSelected &&
@@ -362,6 +448,43 @@ export default class TabControls extends Component {
           >
             Move to Window
           </button>
+          {nextWindowTab && nextTabs && (
+            <select
+              id="select-window"
+              className="form-control input-sm"
+              value={nextWindowTab.windowId}
+              onChange={this.updateNextWindow}
+            >
+              {nextTabs.map(tab => (
+                <option key={tab.windowId} value={tab.windowId}>
+                  {tab.title}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
+
+        <div id="tab-control-buttons">
+          <button
+            id="sort-tabs"
+            disabled={!anySelected}
+            className="btn btn-outline-dark"
+            onClick={this.sortTabs}
+          >
+            Sort
+          </button>
+          <select
+            id="sort-tabs-by"
+            className="form-control input-sm"
+            value={sortTabsBy}
+            onChange={this.changeSort}
+          >
+            {this.constructor.SORT_OPTIONS.map(sortOption => (
+              <option key={sortOption.value} value={sortOption.value}>
+                {sortOption.title}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
     );
