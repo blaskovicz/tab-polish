@@ -381,16 +381,6 @@ export default class TabControls extends Component {
     const anySelected = allSelected || this.anySelected();
     return (
       <div id="tab-controls">
-        <label htmlFor="select-all-tabs">
-          <input
-            disabled={!currentWindow}
-            type="checkbox"
-            id="select-all-tabs"
-            onChange={this.setSelectionAll}
-            value={allSelected}
-          />
-          Select All
-        </label>
         <div id="active-tabs">
           <form>
             {currentWindow &&
@@ -427,6 +417,16 @@ export default class TabControls extends Component {
               ))}
           </form>
         </div>
+        <label htmlFor="select-all-tabs">
+          <input
+            disabled={!currentWindow}
+            type="checkbox"
+            id="select-all-tabs"
+            onChange={this.setSelectionAll}
+            value={allSelected}
+          />
+          Select All
+        </label>
         <div id="active-windows">
           <button
             className="btn btn-outline-dark"
