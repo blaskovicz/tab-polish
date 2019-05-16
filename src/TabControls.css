@@ -1,6 +1,5 @@
 #tab-controls {
   display: flex;
-  min-height: 200px;
   flex-direction: column;
 }
 #tab-controls h4.title {
@@ -12,6 +11,7 @@
   margin-bottom: 6px;
 }
 #active-tabs {
+  min-height: 90px;
   max-height: 400px;
   overflow-y: auto;
   margin-bottom: 6px;
