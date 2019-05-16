@@ -6,7 +6,8 @@ import {
   PREFERENCE_TREAT_TAB_URL_PATHS_AS_UNIQUE,
   PREFERENCE_TREAT_TAB_URL_FRAGMENTS_AS_UNIQUE,
   PREFERENCE_TREAT_TAB_URL_SEARCH_PARAMS_AS_UNIQUE,
-  PREFERENCE_CLOSE_OLD_TABS
+  PREFERENCE_CLOSE_OLD_TABS,
+  PREFERENCE_SORT_TABS_BY
 } from "./lib/Constants";
 import { searchParamsMatch } from "./lib/Utils";
 import Chrome from "./lib/Chrome";
@@ -25,6 +26,7 @@ export default class TabControls extends Component {
     { title: "By URL, Asc", value: "url_asc" },
     { title: "By URL, Desc", value: "url_desc" }
   ];
+  static DEFAULT_SORT = "url_asc";
   constructor(props) {
     super(props);
     this.polishing = false;
@@ -33,7 +35,7 @@ export default class TabControls extends Component {
       currentWindow: null,
       nextTabs: [],
       nextWindowTab: null,
-      sortTabsBy: this.constructor.SORT_OPTIONS[0].value
+      sortTabsBy: null
     };
   }
   componentWillMount() {
@@ -196,8 +198,17 @@ export default class TabControls extends Component {
         resolve(allWindows);
       });
     });
-    Promise.all([currentWindowP, allWindowsP]).then(values => {
-      const [currentWindow, allWindows] = values;
+    const preferencesP = new Promise((resolve, reject) => {
+      Chrome.storage.sync.get(PREFERENCE_SORT_TABS_BY, items => {
+        if (Chrome.runtime.lastError) {
+          reject(Chrome.runtime.lastError);
+        } else {
+          resolve(items);
+        }
+      });
+    });
+    Promise.all([currentWindowP, allWindowsP, preferencesP]).then(values => {
+      const [currentWindow, allWindows, preferences] = values;
       const nextTabs = [];
       for (let win of allWindows) {
         if (win.id === currentWindow.id) continue;
@@ -207,7 +218,8 @@ export default class TabControls extends Component {
       }
       nextTabs.push(this.constructor.NEW_TAB);
       const nextWindowTab = nextTabs[0];
-      this.setState({ nextTabs, currentWindow, nextWindowTab });
+      const sortTabsBy = preferences[PREFERENCE_SORT_TABS_BY];
+      this.setState({ nextTabs, currentWindow, nextWindowTab, sortTabsBy });
     });
   };
   moveSelectedTabs = () => {
@@ -265,7 +277,22 @@ export default class TabControls extends Component {
     this.setState({ selectedTabs });
   };
   changeSort = e => {
-    this.setState({ sortTabsBy: e.target.value });
+    const sortTabsBy = e.target.value;
+    // save to storage
+    console.log(
+      `ref=tab-controls.change-sort at=start sortTabsBy=${sortTabsBy}`
+    );
+    Chrome.storage.sync.set({ [PREFERENCE_SORT_TABS_BY]: sortTabsBy }, () => {
+      if (Chrome.runtime.lastError) {
+        console.warn(
+          `ref=tab-controls.change-sort at=error`,
+          Chrome.runtime.lastError
+        );
+      } else {
+        this.setState({ sortTabsBy });
+        console.log(`ref=tab-controls.change-sort at=finish`);
+      }
+    });
   };
   sortTabs = async () => {
     const { sortTabsBy, selectedTabs, currentWindow } = this.state;
@@ -469,7 +496,7 @@ export default class TabControls extends Component {
           <select
             id="sort-tabs-by"
             className="form-control input-sm"
-            value={sortTabsBy}
+            value={sortTabsBy || this.constructor.DEFAULT_SORT}
             onChange={this.changeSort}
           >
             {this.constructor.SORT_OPTIONS.map(sortOption => (
