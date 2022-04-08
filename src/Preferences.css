@@ -13,9 +13,9 @@
   text-decoration: underline;
 }
 #polish-options-wrapper .button-close-align {
-  display: flex;
-  align-content: flex-end;
-  flex-direction: column;
+  position: absolute;
+  right: 0;
+  top: -0.25em;
 }
 #polish-options {
   left: 0;
@@ -31,14 +31,19 @@
   padding: 0 5px 0 5px;
   margin-bottom: 5px;
   border: 1px solid #cfd5db;
+  overflow-y: auto;
+  height: 13em;
 }
 #polish-options label {
   display: block;
 }
+#polish-options label.disabled {
+  opacity: 0.5;
+}
 #polish-options label:not(:last-of-type) {
   border-bottom: 1px solid #d6d6d6;
 }
-#polish-options label:hover {
+#polish-options label:not(.disabled):hover {
   color: gray;
   cursor: pointer;
 }

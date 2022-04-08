@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 //import Loading from "./Loading";
 import Chrome from "./lib/Chrome";
-import { DEFAULT_PREFERENCES } from "./lib/Constants";
+import {DEFAULT_PREFERENCES, PREFERENCE_CLOSE_DUPLICATE_TABS} from "./lib/Constants";
 import "./Preferences.css";
 
 export default class Preferences extends Component {
@@ -49,6 +49,7 @@ export default class Preferences extends Component {
 
   render() {
     const { state } = this;
+    const closeDupes = state[PREFERENCE_CLOSE_DUPLICATE_TABS] === undefined ? DEFAULT_PREFERENCES[PREFERENCE_CLOSE_DUPLICATE_TABS] : state[PREFERENCE_CLOSE_DUPLICATE_TABS];
     return (
       <div id="polish-options-wrapper">
         <button
@@ -75,15 +76,16 @@ export default class Preferences extends Component {
                 type="button"
                 onClick={this.toggleOptions}
               >
-                Close
+                X
               </button>
             </div>
             {Object.keys(DEFAULT_PREFERENCES).map(option => {
               const loading = state[option] === undefined;
+              const prefDisabled = loading || (!closeDupes && option !== PREFERENCE_CLOSE_DUPLICATE_TABS);
               return (
-                <label key={option}>
+                <label key={option} className={prefDisabled ? 'disabled' : ''}>
                   <input
-                    disabled={loading}
+                    disabled={prefDisabled}
                     type="checkbox"
                     name={option}
                     onChange={this.updatePref}
