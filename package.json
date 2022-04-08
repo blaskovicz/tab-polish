@@ -2,6 +2,10 @@
   "name": "tab-polish",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "16",
+    "yarn": "1.x"
+  },
   "dependencies": {
     "bootstrap": "^4.0.0-beta.2",
     "jquery": ">=3.5.0",
