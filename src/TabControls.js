@@ -7,7 +7,7 @@ import {
   PREFERENCE_TREAT_TAB_URL_FRAGMENTS_AS_UNIQUE,
   PREFERENCE_TREAT_TAB_URL_SEARCH_PARAMS_AS_UNIQUE,
   PREFERENCE_CLOSE_OLD_TABS,
-  PREFERENCE_SORT_TABS_BY
+  PREFERENCE_SORT_TABS_BY, PREFERENCE_CLOSE_DUPLICATE_TABS
 } from "./lib/Constants";
 import { searchParamsMatch } from "./lib/Utils";
 import Chrome from "./lib/Chrome";
@@ -90,6 +90,7 @@ export default class TabControls extends Component {
 
         if (!tabs || tabs.length < 2) return; // less than 2 tabs matching, bail.
 
+        const closeDuplicateTabs = preferences[PREFERENCE_CLOSE_DUPLICATE_TABS];
         const closeOldTabs = preferences[PREFERENCE_CLOSE_OLD_TABS];
         const uniquePaths =
           preferences[PREFERENCE_TREAT_TAB_URL_PATHS_AS_UNIQUE];
@@ -160,19 +161,22 @@ export default class TabControls extends Component {
 
         if (haveTabsToClose) {
           console.log(
-            `ref=tab-controls.polish-tabs at=remove-tabs tabs=`,
+            `ref=tab-controls.polish-tabs pref.enabled=${closeDuplicateTabs} at=remove-tabs tabs=`,
             tabsToClose
           );
-          actions.push(
-            new Promise((resolve, reject) => {
-              Chrome.tabs.remove(
-                tabsToClose.map(matchingTab => matchingTab.id),
-                () => {
-                  resolve();
-                }
-              );
-            })
-          );
+
+          if (closeDuplicateTabs) {
+            actions.push(
+                new Promise((resolve, reject) => {
+                  Chrome.tabs.remove(
+                      tabsToClose.map(matchingTab => matchingTab.id),
+                      () => {
+                        resolve();
+                      }
+                  );
+                })
+            );
+          }
         }
 
         // TODO focus window?
