@@ -16,8 +16,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-      fetch-depth: 0
-      fetch-tags: true
+      with:
+        fetch-depth: 0
+        fetch-tags: true
 
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
